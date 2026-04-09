@@ -1,0 +1,242 @@
+body {
+  font-family: "Outfit", sans-serif;
+}
+
+::selection {
+  background-color: hsl(160 84% 39%);
+  color: #fff;
+}
+
+/* Light mode */
+:root {
+  --bg: #ffffff;
+  --fg: hsl(220 20% 10%);
+  --card: #ffffff;
+  --card-border: hsl(160 20% 90%);
+  --muted: hsl(220 10% 45%);
+  --accent-bg: hsl(160 40% 95%);
+  --accent-fg: hsl(160 84% 30%);
+  --input-border: hsl(160 20% 90%);
+}
+
+.dark {
+  --bg: hsl(220 25% 8%);
+  --fg: hsl(0 0% 98%);
+  --card: hsl(220 25% 12%);
+  --card-border: hsl(220 25% 20%);
+  --muted: hsl(220 10% 60%);
+  --accent-bg: hsl(160 30% 15%);
+  --accent-fg: hsl(160 84% 60%);
+  --input-border: hsl(220 25% 20%);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background 0.3s, color 0.3s;
+}
+
+.card-custom {
+  background: var(--card);
+  border-color: var(--card-border);
+}
+
+.card-custom:hover {
+  border-color: hsl(160 84% 39% / 0.3);
+}
+
+.muted-text {
+  color: var(--muted);
+}
+
+.accent-badge {
+  background: var(--accent-bg);
+  color: var(--accent-fg);
+}
+
+.input-custom {
+  background: var(--card);
+  border: 1px solid var(--input-border);
+  color: var(--fg);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.input-custom:hover,
+.input-custom:focus {
+  border-color: transparent;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.2), 0 2px 12px rgba(32, 33, 36, 0.1);
+}
+
+.dark .input-custom:hover,
+.dark .input-custom:focus {
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+  border-color: var(--card-border);
+}
+
+.input-custom::placeholder {
+  color: var(--muted);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--card) inset !important;
+  -webkit-text-fill-color: var(--fg) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.grad-primary {
+  background: linear-gradient(135deg, hsl(160 84% 39%), hsl(160 84% 50%));
+}
+
+.grad-secondary {
+  background: linear-gradient(135deg, hsl(25 95% 53%), hsl(25 100% 60%));
+}
+
+.link-card {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid var(--card-border);
+}
+
+.link-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.glass-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.widget-grad-1 {
+  background: linear-gradient(135deg, var(--card), hsl(160 84% 39% / 0.05));
+}
+
+.widget-grad-1:hover {
+  border-color: hsl(160 84% 39% / 0.5);
+  box-shadow: 0 20px 40px -15px hsl(160 84% 39% / 0.3);
+  background: linear-gradient(135deg, var(--card), hsl(160 84% 39% / 0.15));
+}
+
+.widget-grad-2 {
+  background: linear-gradient(135deg, var(--card), hsl(25 95% 53% / 0.05));
+}
+
+.widget-grad-2:hover {
+  border-color: hsl(25 95% 53% / 0.5);
+  box-shadow: 0 20px 40px -15px hsl(25 95% 53% / 0.3);
+  background: linear-gradient(135deg, var(--card), hsl(25 95% 53% / 0.15));
+}
+
+.widget-grad-3 {
+  background: linear-gradient(135deg, var(--card), hsl(210 100% 50% / 0.05));
+}
+
+.widget-grad-3:hover {
+  border-color: hsl(210 100% 50% / 0.5);
+  box-shadow: 0 20px 40px -15px hsl(210 100% 50% / 0.3);
+  background: linear-gradient(135deg, var(--card), hsl(210 100% 50% / 0.15));
+}
+
+.gsc-control-cse {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+}
+
+.gsc-input-box {
+  background: var(--card) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 9999px !important;
+  padding: 4px 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.gsc-input-box-focus {
+  border-color: transparent !important;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.2), 0 2px 12px rgba(32, 33, 36, 0.1) !important;
+  outline: none !important;
+}
+
+.gsc-search-button,
+.gcsc-branding {
+  display: none !important;
+}
+
+.gsib_a {
+  padding: 8px 16px 10px 50px !important;
+}
+
+.gsc-input {
+  background: none !important;
+  color: var(--fg) !important;
+  font-size: 16px !important;
+}
+
+.gsc-input::placeholder {
+  color: var(--muted) !important;
+}
+
+.gssb_c,
+.gssb_c *,
+.gssb_m,
+.gssb_m table,
+.gssb_m tr,
+.gssb_m td {
+  background-color: var(--card) !important;
+  color: var(--fg) !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  border: none !important;
+}
+
+.gssb_m {
+  border: 1px solid var(--card-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden !important;
+  margin-top: 8px !important;
+}
+
+.gssb_a td {
+  padding: 12px 20px !important;
+  font-family: 'Outfit', sans-serif !important;
+  cursor: pointer !important;
+}
+
+.gssb_a.gssb_i td,
+.gssb_a:hover td {
+  background-color: var(--accent-bg) !important;
+  color: var(--accent-fg) !important;
+}
+
+.gssb_l,
+.gssb_h {
+  display: none !important;
+}
+
+.gsc-results-wrapper-overlay {
+  background-color: var(--bg) !important;
+}
+
+.gsc-results-wrapper-visible {
+  background-color: var(--card) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .gsc-input-box {
+  background: var(--card) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark .gsc-input-box-focus {
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.7) !important;
+  border-color: var(--primary) !important;
+}
+
+.dark .gsc-input {
+  color: #fff !important;
+}

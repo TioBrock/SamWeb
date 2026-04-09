@@ -1,0 +1,155 @@
+/* =============================================================================
+   styles.qss — Tema Escuro (Estilo Chrome / Vivaldi)
+   ============================================================================= */
+
+/* --- Janela Principal --- */
+QMainWindow {
+    background-color: #202124;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BARRA DE NAVEGAÇÃO SUPERIOR
+   ───────────────────────────────────────────────────────────────────────────── */
+QToolBar#toolbar_principal {
+    background-color: #35363a; /* Mesma cor da aba ativa */
+    border: none;
+    padding: 6px 8px;
+    spacing: 4px;
+}
+
+/* Contêiner que agrupa os três botões de navegação */
+QWidget#nav_group {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 17px;
+}
+
+/* Botões circulares: Voltar, Avançar, Recarregar */
+QPushButton#btn_nav_voltar,
+QPushButton#btn_nav_avancar,
+QPushButton#btn_nav_recarregar {
+    background-color: transparent;
+    color: #9aa0a6;
+    border: none;
+    border-radius: 17px;
+    font-size: 18px;
+    font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+    padding: 10px;
+}
+
+QPushButton#btn_nav_voltar:hover,
+QPushButton#btn_nav_avancar:hover,
+QPushButton#btn_nav_recarregar:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e8eaed;
+}
+
+QPushButton#btn_nav_voltar:pressed,
+QPushButton#btn_nav_avancar:pressed,
+QPushButton#btn_nav_recarregar:pressed {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+QPushButton#btn_nav_voltar:disabled,
+QPushButton#btn_nav_avancar:disabled,
+QPushButton#btn_nav_recarregar:disabled {
+    color: #5f6368;
+    opacity: 0.5;
+}
+
+/* ─── Omnibox (Barra de endereços) ───────────────────────────────────────────*/
+QLineEdit#omnibox {
+    background-color: #202124;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    padding: 0px 20px;
+    font-size: 14px;
+    font-family: "Outfit", "Segoe UI", sans-serif;
+    color: #e8eaed;
+    selection-background-color: #8ab4f8;
+    selection-color: #202124;
+}
+
+QLineEdit#omnibox:focus {
+    background-color: #202124;
+    border: 1px solid #8ab4f8;
+}
+
+QLineEdit#omnibox:hover:!focus {
+    background-color: #292a2d;
+}
+
+/* ─── Botão Nova Aba (+) ─────────────────────────────────────────────────── */
+QPushButton#btn_nova_aba {
+    background-color: transparent;
+    color: #9aa0a6;
+    border: none;
+    border-radius: 17px;
+    font-size: 22px;
+    font-weight: 400;
+    padding: 0;
+    padding-bottom: 2px;
+}
+
+QPushButton#btn_nova_aba:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e8eaed;
+}
+
+QPushButton#btn_nova_aba:pressed {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WIDGET DE ABAS
+   ───────────────────────────────────────────────────────────────────────────── */
+QTabWidget#widget_abas::pane {
+    border: none;
+    background-color: #35363a; /* Mesma cor da toolbar para criar fusão visual */
+}
+
+QTabWidget#widget_abas > QTabBar {
+    background: #202124; /* Fundo mais escuro atrás das abas */
+}
+
+QTabWidget#widget_abas > QTabBar::tab {
+    background-color: transparent;
+    color: #9aa0a6;
+    border: none;
+    padding: 8px 16px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-top: 4px; /* Espacinho extra em cima (estilo Vivaldi/Chrome) */
+    font-family: "Outfit", "Segoe UI", sans-serif;
+    font-size: 13px;
+    min-width: 120px;
+    max-width: 240px;
+}
+
+QTabWidget#widget_abas > QTabBar::tab:selected {
+    background-color: #35363a; /* Fica da exata cor da toolbar */
+    color: #e8eaed;
+    font-weight: 500;
+}
+
+QTabWidget#widget_abas > QTabBar::tab:hover:!selected {
+    background-color: #292a2d;
+    color: #e8eaed;
+}
+
+/* Scrollbars */
+QScrollBar:vertical { background: transparent; width: 10px; border-radius: 5px; margin: 2px; }
+QScrollBar::handle:vertical { background: #5f6368; border-radius: 5px; min-height: 20px; }
+QScrollBar::handle:vertical:hover { background: #9aa0a6; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar:horizontal { background: transparent; height: 10px; border-radius: 5px; margin: 2px; }
+QScrollBar::handle:horizontal { background: #5f6368; border-radius: 5px; min-width: 20px; }
+QScrollBar::handle:horizontal:hover { background: #9aa0a6; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+
+QPushButton#btn_nav_voltar { image: url('icons/back_dark.svg'); }
+QPushButton#btn_nav_avancar { image: url('icons/forward_dark.svg'); }
+QPushButton#btn_nav_recarregar { image: url('icons/reload_dark.svg'); }
+QTabBar::close-button { image: url('icons/close_dark.svg'); }
+QTabBar::close-button:hover { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
