@@ -101,18 +101,22 @@ QPushButton#btn_nova_aba:pressed {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   WIDGET DE ABAS
+   WIDGET DE ABAS (ChromeTabWidget)
    ───────────────────────────────────────────────────────────────────────────── */
-QTabWidget#widget_abas::pane {
+QStackedWidget {
     border: none;
     background-color: #35363a; /* Mesma cor da toolbar para criar fusão visual */
 }
 
-QTabWidget#widget_abas > QTabBar {
+QWidget#top_bar {
     background: #202124; /* Fundo mais escuro atrás das abas */
 }
 
-QTabWidget#widget_abas > QTabBar::tab {
+QTabBar#widget_abas {
+    background: transparent;
+}
+
+QTabBar#widget_abas::tab {
     background-color: transparent;
     color: #9aa0a6;
     border: none;
@@ -126,15 +130,31 @@ QTabWidget#widget_abas > QTabBar::tab {
     max-width: 240px;
 }
 
-QTabWidget#widget_abas > QTabBar::tab:selected {
+QTabBar#widget_abas::tab:selected {
     background-color: #35363a; /* Fica da exata cor da toolbar */
     color: #e8eaed;
     font-weight: 500;
 }
 
-QTabWidget#widget_abas > QTabBar::tab:hover:!selected {
+QTabBar#widget_abas::tab:hover:!selected {
     background-color: #292a2d;
     color: #e8eaed;
+}
+
+/* Setas de scroll da barra de abas */
+QTabBar#widget_abas QToolButton {
+    background-color: #202124;
+    border: none;
+    padding: 4px;
+}
+QTabBar#widget_abas QToolButton:hover {
+    background-color: #292a2d;
+}
+QTabBar#widget_abas QToolButton::left-arrow {
+    image: url('icons/back_dark.svg');
+}
+QTabBar#widget_abas QToolButton::right-arrow {
+    image: url('icons/forward_dark.svg');
 }
 
 /* Scrollbars */
@@ -147,9 +167,101 @@ QScrollBar::handle:horizontal { background: #5f6368; border-radius: 5px; min-wid
 QScrollBar::handle:horizontal:hover { background: #9aa0a6; }
 QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
 
+/* ─── Ícones SVG dos botões ────────────────────────────────────────*/
 QPushButton#btn_nav_voltar { image: url('icons/back_dark.svg'); }
 QPushButton#btn_nav_avancar { image: url('icons/forward_dark.svg'); }
 QPushButton#btn_nav_recarregar { image: url('icons/reload_dark.svg'); }
+QPushButton#btn_historico { image: url('icons/history_dark.svg'); }
 QTabBar::close-button { image: url('icons/close_dark.svg'); }
 QTabBar::close-button:hover { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
+/* ─── Botão Histórico ────────────────────────────────────────*/
+QPushButton#btn_historico {
+    background-color: transparent;
+    border: none;
+    border-radius: 17px;
+    padding: 10px;
+}
+QPushButton#btn_historico:hover { background-color: rgba(255, 255, 255, 0.1); }
+QPushButton#btn_historico:pressed { background-color: rgba(255, 255, 255, 0.2); }
+
+/* ─── Botão Nova Aba (corner widget das abas) ───────────────────*/
+QPushButton#btn_nova_aba {
+    background-color: transparent;
+    color: #9aa0a6;
+    border: none;
+    border-radius: 14px;
+    font-size: 20px;
+    font-weight: 400;
+}
+QPushButton#btn_nova_aba:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e8eaed;
+}
+QPushButton#btn_nova_aba:pressed { background-color: rgba(255, 255, 255, 0.2); }
+
+/* ─── ProgressBar ────────────────────────────────────────────*/
+QProgressBar { background-color: transparent; border: none; }
+QProgressBar::chunk { background-color: #8ab4f8; }
+
+/* ─── Janela de Histórico ──────────────────────────────────*/
+QDialog#history_dialog { background-color: #202124; }
+
+QLabel#history_title {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    color: #e8eaed;
+}
+
+QLabel#history_counter {
+    font-size: 12px;
+    color: #9aa0a6;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+}
+
+QTableWidget#history_table {
+    background-color: #292a2d;
+    alternate-background-color: #35363a;
+    color: #e8eaed;
+    border: 1px solid #3c4043;
+    border-radius: 8px;
+    gridline-color: transparent;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    font-size: 13px;
+    selection-background-color: #8ab4f8;
+    selection-color: #202124;
+}
+
+QTableWidget#history_table QHeaderView::section {
+    background-color: #35363a;
+    color: #9aa0a6;
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 12px;
+    border: none;
+    border-bottom: 1px solid #3c4043;
+}
+
+QPushButton#btn_limpar_historico {
+    background-color: transparent;
+    color: #f28b82;
+    border: 1px solid #f28b82;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+}
+QPushButton#btn_limpar_historico:hover { background-color: rgba(242, 139, 130, 0.12); }
+QPushButton#btn_limpar_historico:pressed { background-color: rgba(242, 139, 130, 0.25); }
+
+QPushButton#btn_deletar_linha {
+    background-color: transparent;
+    color: #9aa0a6;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    padding: 2px;
+}
+QPushButton#btn_deletar_linha:hover { color: #f28b82; background-color: rgba(242,139,130,0.12); }
 

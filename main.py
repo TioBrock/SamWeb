@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtCore import QUrl, Qt, pyqtSignal
-from PyQt6.QtGui import QIcon, QPalette
+from PyQt6.QtCore import QUrl, Qt, pyqtSignal, QTimer
+from PyQt6.QtGui import QIcon, QPalette, QShortcut, QKeySequence
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -20,8 +20,10 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QWidget,
+    QVBoxLayout,
     QHBoxLayout,
     QSizePolicy,
+    QProgressBar,
 )
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWebEngineCore import (
@@ -29,6 +31,10 @@ from PyQt6.QtWebEngineCore import (
     QWebEnginePage,
     QWebEngineSettings,
 )
+
+from storage.database import DatabaseManager
+from core.history_view import HistoryDialog
+from core.tab_widget import ChromeTabWidget
 
 # ---------------------------------------------------------------------------
 # Constantes de caminho — resolvidas de forma absoluta a partir do main.py
@@ -45,6 +51,9 @@ _HOME_URL_STR: str = HOME_URL.toString()
 
 # Estado global do tema para aplicar em buscas
 TEMA_ATUAL: str = "light"
+
+# Instância global de conexão com o banco de dados
+DB_MANAGER: DatabaseManager = DatabaseManager(PROFILE_DIR / "History.db")
 
 
 # ---------------------------------------------------------------------------
@@ -242,10 +251,17 @@ class BrowserTab(QWebEngineView):
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.Expanding,
         )
-        self.setSizePolicy(
-            QSizePolicy.Policy.Expanding,
-            QSizePolicy.Policy.Expanding,
-        )
+
+        # Hook: Registrar histórico de onde navegou ao terminar de carregar
+        self.loadFinished.connect(self._registrar_historico)
+
+    def _registrar_historico(self, ok: bool) -> None:
+        """Salva a página no banco de dados SQLite caso não seja a Home."""
+        if ok and not self.eh_home():
+            titulo = self.title()
+            url_str = self.url().toString()
+            global DB_MANAGER
+            DB_MANAGER.adicionar_historico(url_str, titulo)
 
     def carregar_home(self) -> None:
         """
@@ -346,7 +362,29 @@ class MainWindow(QMainWindow):
         self._configurar_janela()
         self._criar_barra_navegacao()
         self._criar_abas()
+        self._configurar_atalhos()
         self._abrir_nova_aba()      # Primeira aba com a Home Screen
+
+    # ------------------------------------------------------------------
+    # Atalhos e Ferramentas Globais
+    # ------------------------------------------------------------------
+    def _configurar_atalhos(self) -> None:
+        """Configura os atalhos de teclado do navegador."""
+        atalho_hist = QShortcut(QKeySequence("Ctrl+H"), self)
+        atalho_hist.activated.connect(self._abrir_historico)
+
+    def _abrir_historico(self) -> None:
+        """Abre a janela de visualização do Histórico local."""
+        dialog = HistoryDialog(DB_MANAGER, self)
+        dialog.url_selecionada.connect(self._abrir_url_do_historico)
+        dialog.show()
+
+    def _abrir_url_do_historico(self, url: QUrl) -> None:
+        """Abre a URL selecionada no histórico na aba atual."""
+        if aba := self._aba_atual():
+            aba.setUrl(url)
+        else:
+            self._abrir_nova_aba(url)
 
     # ------------------------------------------------------------------
     # Perfil persistente
@@ -445,7 +483,7 @@ class MainWindow(QMainWindow):
         _sep.setFixedWidth(10)
         toolbar.addWidget(_sep)
 
-        # ── Omnibox (Barra de Endereços) ─────────────────────────────
+        # ── Omnibox (Barra de Endereços) ──────────────────────────────
         self._omnibox = QLineEdit()
         self._omnibox.setObjectName("omnibox")
         self._omnibox.setPlaceholderText("Pesquise ou digite um endereço…")
@@ -457,34 +495,46 @@ class MainWindow(QMainWindow):
         self._omnibox.returnPressed.connect(self._navegar_por_omnibox)
         toolbar.addWidget(self._omnibox)
 
-        # ── Separador ────────────────────────────────────────────────
+        # ── Separador + Botão de Histórico ───────────────────────────
         _sep2 = QWidget()
-        _sep2.setFixedWidth(10)
+        _sep2.setFixedWidth(6)
         toolbar.addWidget(_sep2)
 
-        # ── Botão Nova Aba ───────────────────────────────────────────
-        self._btn_nova_aba = QPushButton("+")
-        self._btn_nova_aba.setObjectName("btn_nova_aba")
-        self._btn_nova_aba.setFixedSize(34, 34)
-        self._btn_nova_aba.setToolTip("Nova Aba  (Ctrl + T)")
-        self._btn_nova_aba.clicked.connect(self._abrir_nova_aba)
-        toolbar.addWidget(self._btn_nova_aba)
+        self._btn_historico = QPushButton()
+        self._btn_historico.setObjectName("btn_historico")
+        self._btn_historico.setFixedSize(34, 34)
+        self._btn_historico.setToolTip("Histórico  (Ctrl + H)")
+        self._btn_historico.clicked.connect(self._abrir_historico)
+        toolbar.addWidget(self._btn_historico)
 
     # ------------------------------------------------------------------
-    # Widget de abas
+    # Widget de abas e Container (Com Barra de Progresso)
     # ------------------------------------------------------------------
 
     def _criar_abas(self) -> None:
-        """Inicializa o QTabWidget como widget central da janela."""
-        self._abas = QTabWidget()
-        self._abas.setObjectName("widget_abas")
-        self._abas.setTabsClosable(True)
-        self._abas.setMovable(True)
-        self._abas.setDocumentMode(True)
-        self._abas.setElideMode(Qt.TextElideMode.ElideRight)
+        """Inicializa um layout vertical contendo a progress bar e o tab widget customizado.
+        """
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        # Barra de progresso fina
+        self._progressbar = QProgressBar()
+        self._progressbar.setFixedHeight(2)
+        self._progressbar.setTextVisible(False)
+        self._progressbar.hide()
+
+        # Widget de navegação
+        self._abas = ChromeTabWidget(self)
+        
+        self._abas.btn_nova_aba.clicked.connect(self._abrir_nova_aba)
         self._abas.tabCloseRequested.connect(self._fechar_aba)
         self._abas.currentChanged.connect(self._ao_trocar_aba)
-        self.setCentralWidget(self._abas)
+
+        layout.addWidget(self._progressbar)
+        layout.addWidget(self._abas)
+        self.setCentralWidget(container)
 
     # ------------------------------------------------------------------
     # Gerenciamento de abas
@@ -511,6 +561,10 @@ class MainWindow(QMainWindow):
         aba._sam_page.tema_alterado.connect(self._ao_tema_web_alterado)
         aba.urlChanged.connect(self._ao_mudar_url)
         aba.titleChanged.connect(self._ao_mudar_titulo)
+        
+        # Conecta eventos de progresso de rede à interface global
+        aba.loadProgress.connect(self._ao_progresso)
+        aba.loadFinished.connect(self._ao_fim_carregamento)
 
         indice = self._abas.addTab(aba, "Nova Aba")
         self._abas.setCurrentIndex(indice)
@@ -624,6 +678,29 @@ class MainWindow(QMainWindow):
                 self._omnibox.clear()
             else:
                 self._omnibox.setText(url_str)
+        self._progressbar.hide()   # Esconde a barra ao pular entre abas para evitar sujeira visual
+
+    def _ao_progresso(self, progresso: int) -> None:
+        """Atualiza a QProgressBar durante o carregamento da rede."""
+        emissora = self.sender()
+        if emissora is self._aba_atual():
+            if progresso < 100:
+                self._progressbar.show()
+                self._progressbar.setValue(progresso)
+            else:
+                self._progressbar.hide()
+
+    def _ao_fim_carregamento(self, ok: bool) -> None:
+        """Mantém a barra cheia por um breve momento e então oculta."""
+        emissora = self.sender()
+        if emissora is self._aba_atual():
+            self._progressbar.setValue(100)
+            
+            def esconder():
+                self._progressbar.hide()
+                self._progressbar.setValue(0)
+                
+            QTimer.singleShot(600, esconder)
 
     def _ao_tema_web_alterado(self, tema: str) -> None:
         """
@@ -636,11 +713,16 @@ class MainWindow(QMainWindow):
             
             # (WebAttribute.ForceDarkMode falha no PyQt6 nativo mais antigo)
             # Como fallback pra outros sites compatíveis com prefers-color-scheme
-            js = f"document.documentElement.style.colorScheme = '{tema}';"
+            js_comum = f"document.documentElement.style.colorScheme = '{tema}';"
+            js_home = f"if ('{tema}' === 'dark') document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark');"
+
             for i in range(self._abas.count()):
                 t = self._abas.widget(i)
-                if isinstance(t, BrowserTab) and not t.eh_home():
-                    t.page().runJavaScript(js)
+                if isinstance(t, BrowserTab):
+                    if t.eh_home():
+                        t.page().runJavaScript(js_home)
+                    else:
+                        t.page().runJavaScript(js_comum)
 
 
 # ---------------------------------------------------------------------------

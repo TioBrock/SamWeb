@@ -1,0 +1,6 @@
+<!-- history_dark.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8eaed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="9"/>
+  <polyline points="12 7 12 12 15 15"/>
+  <path d="M3.05 11a9 9 0 0 1 1.44-4.27"/>
+</svg>
